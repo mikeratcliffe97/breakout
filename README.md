@@ -1,2 +1,2 @@
-ASGE Tutorial:
-================== Worksheet available on Blackboard for creating your Breakout game.
+ASGE Breakout tutorial template code: 
+Worksheet available on Blackboard for creating your Breakout game.
