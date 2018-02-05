@@ -31,18 +31,25 @@ private:
 	//Add your GameObjects
 	GameObject paddle;
 	ASGE::Sprite* paddle_sprite;
+	int velocity = 700;
+
 
 	GameObject ball;
 	ASGE::Sprite* ball_sprite;
 
+	//Block objects and data
 	GameObject blocks[50] = {};
 	ASGE::Sprite* blocks_sprites[50] = {};
 	
 	int max_sprites = 50;
 	int block_width = 64;
 	int block_height = 32;
+	bool block_visible = true;
+
+	//menu options
 	bool in_menu = true;
 
+	//Paddle movement bool
 	bool paddle_left = false;
 	bool paddle_right = false;
 };

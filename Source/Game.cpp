@@ -62,6 +62,8 @@ bool BreakoutGame::init()
 	}
 
 	paddle_sprite = paddle.spriteComponent()->getSprite();
+	paddle_sprite->xPos(game_width / 2);
+	
 	if (!ball.addSpriteComponent(renderer.get(), ".\\Resources\\Textures\\puzzlepack\\png\\ballGrey.png"))
 	{
 		return false;
@@ -131,7 +133,7 @@ void BreakoutGame::keyHandler(const ASGE::SharedEventData data)
 
 	if (!in_menu)
 		
-		//Bool Statements to make paddlemove up
+		//Bool Statements to make paddle move left
 		if (key->key == ASGE::KEYS::KEY_A &&
 			key->action == ASGE::KEYS::KEY_PRESSED)
 		{
@@ -144,7 +146,7 @@ void BreakoutGame::keyHandler(const ASGE::SharedEventData data)
 		paddle_left = false;
 	}
 
-	//Bool Statements to make paddle1 move down
+	//Bool Statements to make paddle move right
 	if (key->key == ASGE::KEYS::KEY_D &&
 		key->action == ASGE::KEYS::KEY_PRESSED)
 	{
@@ -191,13 +193,13 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 	{
 		
 
-		auto paddle_pos = paddle.spriteComponent()->getSprite()->xPos();
+		auto paddle_pos = paddle_sprite->xPos();
 
 		if (paddle_left)
 		{
-			if (paddle, paddle_pos >= 0)
+			if (paddle_sprite, paddle_pos >= 0)
 			{
-				paddle_pos -= 700 * (us.delta_time.count() / 1000.f);
+				paddle_pos -= velocity * (us.delta_time.count() / 1000.f);
 			}
 
 			else
@@ -209,9 +211,9 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 
 		if (paddle_right)
 		{
-			if (paddle, paddle_pos  >= game_width)
+			if (paddle_sprite, paddle_pos + paddle_sprite->width()  <= game_width)
 			{
-				paddle_pos += 700 * (us.delta_time.count() / 1000.f);
+				paddle_pos += velocity * (us.delta_time.count() / 1000.f);
 			}
 
 			else
@@ -221,9 +223,8 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 
 		}
 
-		paddle.spriteComponent()->getSprite()->xPos(paddle_pos);
-
-
+		paddle_sprite->xPos(paddle_pos);
+	
 	}
 
 }
@@ -254,7 +255,7 @@ void BreakoutGame::render(const ASGE::GameTime &)
 	{
 		
 		renderer->renderSprite(*paddle_sprite);
-		paddle_sprite->xPos(game_width / 2);
+		paddle_sprite->xPos();
 		paddle_sprite->yPos(game_height - 30);
 		
 		
@@ -269,18 +270,21 @@ void BreakoutGame::render(const ASGE::GameTime &)
 
 		for (int i = 0; i < max_sprites; i++)
 		{
-			blocks_sprites[i]->xPos(x_block_total * block_width);
-			blocks_sprites[i]->yPos(y_block_total * block_height);
-		
-			x_block_total++;
-			
-			if (i == 9 || i == 19 || i == 29 || i == 39 ||  i == 49)
+			if (block_visible)
 			{
-				x_block_total = 0;
-				y_block_total++;
+				blocks_sprites[i]->xPos(x_block_total * block_width);
+				blocks_sprites[i]->yPos(y_block_total * block_height);
+
+				x_block_total++;
+
+				if (i == 9 || i == 19 || i == 29 || i == 39 || i == 49)
+				{
+					x_block_total = 0;
+					y_block_total++;
+				}
+				renderer->renderSprite(*blocks_sprites[i]);
+
 			}
-			renderer->renderSprite(*blocks_sprites[i]);
-		
 		}
 
 	}
