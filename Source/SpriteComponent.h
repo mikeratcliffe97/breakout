@@ -51,6 +51,8 @@ public:
 	rect  getBoundingBox() const;
 
 
+	
+
 private:
 	void freeSprite();
 	ASGE::Sprite* sprite = nullptr;

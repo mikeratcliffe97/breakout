@@ -45,7 +45,7 @@ bool BreakoutGame::init()
 
 	toggleFPS();
 	renderer->setWindowTitle("Breakout!");
-
+	renderer->setClearColour(ASGE::COLOURS::BLACK);
 	// input handling functions
 	inputs->use_threads = false;
 
@@ -56,9 +56,30 @@ bool BreakoutGame::init()
 		ASGE::E_MOUSE_CLICK, &BreakoutGame::clickHandler, this);
 
 
+	if (!paddle.addSpriteComponent(renderer.get(), ".\\Resources\\Textures\\puzzlepack\\png\\paddleBlue.png"))
+	{
+		return false;
+	}
+
+	paddle_sprite = paddle.spriteComponent()->getSprite();
+	if (!ball.addSpriteComponent(renderer.get(), ".\\Resources\\Textures\\puzzlepack\\png\\ballGrey.png"))
+	{
+		return false;
+	}
+	ball_sprite = ball.spriteComponent()->getSprite();
 
 
+	for (int i = 0; i < max_sprites; i++)
+	{
+		if (!blocks[i].addSpriteComponent(renderer.get(), ".\\Resources\\Textures\\puzzlepack\\png\\element_red_rectangle.png"))
+		{
+			return false;
+		}
+		blocks_sprites[i] = blocks[i].spriteComponent()->getSprite();
 
+	}
+
+	
 	return true;
 }
 
@@ -99,7 +120,43 @@ void BreakoutGame::keyHandler(const ASGE::SharedEventData data)
 		signalExit();
 	}
 
+	
+	if (in_menu)
+	{
+		if (key->key == ASGE::KEYS::KEY_ENTER)
+		{
+			in_menu = 0;
+		}
+	}
 
+	if (!in_menu)
+		
+		//Bool Statements to make paddlemove up
+		if (key->key == ASGE::KEYS::KEY_A &&
+			key->action == ASGE::KEYS::KEY_PRESSED)
+		{
+			paddle_left = true;
+		}
+
+	if (key->key == ASGE::KEYS::KEY_A &&
+		key->action == ASGE::KEYS::KEY_RELEASED)
+	{
+		paddle_left = false;
+	}
+
+	//Bool Statements to make paddle1 move down
+	if (key->key == ASGE::KEYS::KEY_D &&
+		key->action == ASGE::KEYS::KEY_PRESSED)
+	{
+		paddle_right = true;
+	}
+
+	if (key->key == ASGE::KEYS::KEY_D &&
+		key->action == ASGE::KEYS::KEY_RELEASED)
+	{
+		paddle_right = false;
+	}
+	
 }
 
 /**
@@ -132,15 +189,51 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 {
 	if (!in_menu)
 	{
+		
+
+		auto paddle_pos = paddle.spriteComponent()->getSprite()->xPos();
+
+		if (paddle_left)
+		{
+			if (paddle, paddle_pos >= 0)
+			{
+				paddle_pos -= 700 * (us.delta_time.count() / 1000.f);
+			}
+
+			else
+			{
+				paddle_left = false;
+			}
+		}
+
+
+		if (paddle_right)
+		{
+			if (paddle, paddle_pos  >= game_width)
+			{
+				paddle_pos += 700 * (us.delta_time.count() / 1000.f);
+			}
+
+			else
+			{
+				paddle_right = false;
+			}
+
+		}
+
+		paddle.spriteComponent()->getSprite()->xPos(paddle_pos);
+
 
 	}
 
-	auto dt_sec = us.delta_time.count() / 1000.0;
+}
+
+	
 
 	//make sure you use delta time in any movement calculations!
 
 
-}
+
 
 /**
 *   @brief   Renders the scene
@@ -155,10 +248,40 @@ void BreakoutGame::render(const ASGE::GameTime &)
 
 	if (in_menu)
 	{
-
+		renderer->renderText("Welcome to Breakout \nPress Enter to start game", 200, 200, 1.0, ASGE::COLOURS::WHITE);
 	}
 	else
 	{
+		
+		renderer->renderSprite(*paddle_sprite);
+		paddle_sprite->xPos(game_width / 2);
+		paddle_sprite->yPos(game_height - 30);
+		
+		
+		
+		renderer->renderSprite(*ball_sprite);
+		ball_sprite->xPos(game_height / 2);
+		ball_sprite->yPos(game_width / 2);
+
+
+		int x_block_total = 0;
+		int y_block_total = 0;
+
+		for (int i = 0; i < max_sprites; i++)
+		{
+			blocks_sprites[i]->xPos(x_block_total * block_width);
+			blocks_sprites[i]->yPos(y_block_total * block_height);
+		
+			x_block_total++;
+			
+			if (i == 9 || i == 19 || i == 29 || i == 39 ||  i == 49)
+			{
+				x_block_total = 0;
+				y_block_total++;
+			}
+			renderer->renderSprite(*blocks_sprites[i]);
+		
+		}
 
 	}
 

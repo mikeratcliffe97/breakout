@@ -29,7 +29,20 @@ private:
 	int  mouse_callback_id = -1;        /**< Mouse Input Callback ID. */
 
 	//Add your GameObjects
+	GameObject paddle;
+	ASGE::Sprite* paddle_sprite;
 
+	GameObject ball;
+	ASGE::Sprite* ball_sprite;
 
+	GameObject blocks[50] = {};
+	ASGE::Sprite* blocks_sprites[50] = {};
+	
+	int max_sprites = 50;
+	int block_width = 64;
+	int block_height = 32;
 	bool in_menu = true;
+
+	bool paddle_left = false;
+	bool paddle_right = false;
 };
