@@ -270,8 +270,7 @@ void BreakoutGame::render(const ASGE::GameTime &)
 
 		for (int i = 0; i < max_sprites; i++)
 		{
-			if (block_visible)
-			{
+			
 				blocks_sprites[i]->xPos(x_block_total * block_width);
 				blocks_sprites[i]->yPos(y_block_total * block_height);
 
@@ -284,7 +283,7 @@ void BreakoutGame::render(const ASGE::GameTime &)
 				}
 				renderer->renderSprite(*blocks_sprites[i]);
 
-			}
+			
 		}
 
 	}

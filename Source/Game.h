@@ -32,7 +32,9 @@ private:
 	GameObject paddle;
 	ASGE::Sprite* paddle_sprite;
 	int velocity = 700;
-
+//Paddle movement bool
+	bool paddle_left = false;
+	bool paddle_right = false;
 
 	GameObject ball;
 	ASGE::Sprite* ball_sprite;
@@ -49,7 +51,5 @@ private:
 	//menu options
 	bool in_menu = true;
 
-	//Paddle movement bool
-	bool paddle_left = false;
-	bool paddle_right = false;
+	
 };
