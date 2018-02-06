@@ -195,6 +195,11 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 
 		auto paddle_pos = paddle_sprite->xPos();
 
+
+		auto y_pos = ball_sprite->yPos();
+		auto x_pos = ball_sprite->xPos();
+
+
 		if (paddle_left)
 		{
 			if (paddle_sprite, paddle_pos >= 0)
@@ -225,6 +230,8 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 
 		paddle_sprite->xPos(paddle_pos);
 	
+
+
 	}
 
 }
@@ -255,8 +262,8 @@ void BreakoutGame::render(const ASGE::GameTime &)
 	{
 		
 		renderer->renderSprite(*paddle_sprite);
-		paddle_sprite->xPos();
-		paddle_sprite->yPos(game_height - 30);
+		paddle_sprite->xPos(); //predefined in init
+		paddle_sprite->yPos(game_height - 30); //umnoving
 		
 		
 		
@@ -271,17 +278,20 @@ void BreakoutGame::render(const ASGE::GameTime &)
 		for (int i = 0; i < max_sprites; i++)
 		{
 			
-				blocks_sprites[i]->xPos(x_block_total * block_width);
-				blocks_sprites[i]->yPos(y_block_total * block_height);
+			blocks_sprites[i]->xPos(x_block_total * block_width);
+			blocks_sprites[i]->yPos(y_block_total * block_height);
 
-				x_block_total++;
-
-				if (i == 9 || i == 19 || i == 29 || i == 39 || i == 49)
-				{
-					x_block_total = 0;
-					y_block_total++;
-				}
+			x_block_total++;
+			if (i == 9 || i == 19 || i == 29 || i == 39 || i == 49)
+			{
+				x_block_total = 0;
+				y_block_total++;
+			}
+			
+			
 				renderer->renderSprite(*blocks_sprites[i]);
+					
+			
 
 			
 		}

@@ -33,8 +33,8 @@ SpriteComponent* GameObject::spriteComponent()
 	return sprite_component;
 }
 
-SpriteComponent* isVisible();
+/*SpriteComponent* isVisible();
 {
 
-}
+}*/
 
