@@ -4,7 +4,7 @@
 
 #include "GameObject.h"
 #include "Rect.h"
-
+#include "Vector1.h"
 
 /**
 *  An OpenGL Game based on ASGE.
@@ -38,6 +38,8 @@ private:
 
 	GameObject ball;
 	ASGE::Sprite* ball_sprite;
+	Vector ball_direction{ 2, 2 };
+
 
 	//Block objects and data
 	GameObject blocks[50] = {};

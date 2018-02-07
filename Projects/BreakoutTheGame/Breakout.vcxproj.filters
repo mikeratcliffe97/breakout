@@ -19,6 +19,9 @@
     <ClCompile Include="..\..\Source\SpriteComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Vector1.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Headers">
@@ -44,5 +47,11 @@
     <ClInclude Include="..\..\Source\SpriteComponent.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Vector1.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Game.props" />
   </ItemGroup>
 </Project>

@@ -6,6 +6,8 @@
 #include <Engine/Sprite.h>
 
 #include "Game.h"
+#include "Vector2.h"
+#include "Vector1.h"
 
 /**
 *   @brief   Default Constructor.
@@ -68,6 +70,8 @@ bool BreakoutGame::init()
 	{
 		return false;
 	}
+	ball_sprite->xPos(game_height / 2);
+	ball_sprite->yPos(game_width / 2);
 	ball_sprite = ball.spriteComponent()->getSprite();
 
 
@@ -199,6 +203,12 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 		auto y_pos = ball_sprite->yPos();
 		auto x_pos = ball_sprite->xPos();
 
+		if ((ball_sprite->xPos() + ball_sprite->width() >= game_width) ||
+			(ball_sprite->xPos() < 0))
+		{
+			ball_direction.x_set(ball_direction.get_x() * -1);
+
+		}
 
 		if (paddle_left)
 		{
@@ -229,9 +239,13 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 		}
 
 		paddle_sprite->xPos(paddle_pos);
-	
+		ball_sprite->xPos(x_pos);
 
 
+		x_pos += velocity * ball_direction.get_x() * (us.delta_time.count() / 1000.f);
+		y_pos += velocity * ball_direction.get_y() * (us.delta_time.count() / 1000.f);
+		ball_sprite->xPos(x_pos);
+		ball_sprite->yPos(y_pos);
 	}
 
 }
@@ -268,8 +282,7 @@ void BreakoutGame::render(const ASGE::GameTime &)
 		
 		
 		renderer->renderSprite(*ball_sprite);
-		ball_sprite->xPos(game_height / 2);
-		ball_sprite->yPos(game_width / 2);
+		
 
 
 		int x_block_total = 0;

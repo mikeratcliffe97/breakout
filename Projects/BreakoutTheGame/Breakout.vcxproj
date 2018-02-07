@@ -97,6 +97,7 @@
     <ClCompile Include="..\..\Source\Game.cpp" />
     <ClCompile Include="..\..\Source\Rect.cpp" />
     <ClCompile Include="..\..\Source\SpriteComponent.cpp" />
+    <ClCompile Include="..\..\Source\Vector1.cpp" />
     <ClCompile Include="..\..\Source\Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -104,7 +105,11 @@
     <ClInclude Include="..\..\Source\GameObject.h" />
     <ClInclude Include="..\..\Source\Rect.h" />
     <ClInclude Include="..\..\Source\SpriteComponent.h" />
+    <ClInclude Include="..\..\Source\Vector1.h" />
     <ClInclude Include="..\..\Source\Vector2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Game.props" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
