@@ -70,19 +70,23 @@ bool BreakoutGame::init()
 	{
 		return false;
 	}
-	ball_sprite->xPos(game_height / 2);
-	ball_sprite->yPos(game_width / 2);
 	ball_sprite = ball.spriteComponent()->getSprite();
+	ball_sprite->yPos(game_height / 2);
+	ball_sprite->xPos(game_width / 2);
 
 
 	for (int i = 0; i < max_sprites; i++)
 	{
+		
 		if (!blocks[i].addSpriteComponent(renderer.get(), ".\\Resources\\Textures\\puzzlepack\\png\\element_red_rectangle.png"))
 		{
 			return false;
 		}
-		blocks_sprites[i] = blocks[i].spriteComponent()->getSprite();
 
+		if (block_visible)
+		{
+			blocks_sprites[i] = blocks[i].spriteComponent()->getSprite();
+		}
 	}
 
 	
@@ -203,6 +207,8 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 		auto y_pos = ball_sprite->yPos();
 		auto x_pos = ball_sprite->xPos();
 
+	
+		//Wall Collision
 		if ((ball_sprite->xPos() + ball_sprite->width() >= game_width) ||
 			(ball_sprite->xPos() < 0))
 		{
@@ -210,6 +216,24 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 
 		}
 
+
+		//Cieling Collision
+		if ((ball_sprite->yPos() + ball_sprite->width() >= game_height) ||
+			(ball_sprite->yPos() < 0))
+		{
+			ball_direction.y_set(ball_direction.get_y() * -1);
+		}
+		//Paddle Collision
+		if ((ball_sprite->xPos() + ball_sprite->width() <= paddle_sprite->yPos()) + paddle_sprite->height() && 
+			ball_sprite->yPos() > paddle_sprite->yPos() &&
+			ball_sprite->yPos() + ball_sprite->height() > paddle_sprite->yPos() + paddle_sprite->height() &&
+			ball_sprite->xPos() < paddle_sprite->width() + paddle_sprite->xPos())
+		{
+			ball_direction.y_set(ball_direction.get_y() * -1);
+		}
+
+
+		//Paddle Movement speed
 		if (paddle_left)
 		{
 			if (paddle_sprite, paddle_pos >= 0)
@@ -238,17 +262,18 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 
 		}
 
+		
+		//Position Updates
 		paddle_sprite->xPos(paddle_pos);
-		ball_sprite->xPos(x_pos);
+		
 
-
-		x_pos += velocity * ball_direction.get_x() * (us.delta_time.count() / 1000.f);
-		y_pos += velocity * ball_direction.get_y() * (us.delta_time.count() / 1000.f);
+		//Ball Speed
+		x_pos += (velocity / 2) * ball_direction.get_x() * (us.delta_time.count() / 1000.f);
+		y_pos += (velocity / 2) * ball_direction.get_y() * (us.delta_time.count() / 1000.f);
 		ball_sprite->xPos(x_pos);
 		ball_sprite->yPos(y_pos);
 	}
-
-}
+	}
 
 	
 
@@ -277,7 +302,7 @@ void BreakoutGame::render(const ASGE::GameTime &)
 		
 		renderer->renderSprite(*paddle_sprite);
 		paddle_sprite->xPos(); //predefined in init
-		paddle_sprite->yPos(game_height - 30); //umnoving
+		paddle_sprite->yPos(game_height - 100); //umnoving
 		
 		
 		

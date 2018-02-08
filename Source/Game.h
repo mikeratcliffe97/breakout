@@ -38,7 +38,7 @@ private:
 
 	GameObject ball;
 	ASGE::Sprite* ball_sprite;
-	Vector ball_direction{ 2, 2 };
+	Vector ball_direction{1, -2 };
 
 
 	//Block objects and data
