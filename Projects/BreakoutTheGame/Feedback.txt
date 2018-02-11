@@ -1,0 +1,3 @@
+Ball Speed was too fast so dropped it from 750 to 500.
+Clipping error.
+

@@ -28,10 +28,13 @@ private:
 	int  key_callback_id = -1;	        /**< Key Input Callback ID. */
 	int  mouse_callback_id = -1;        /**< Mouse Input Callback ID. */
 
+	void win();
+	void lose();
+
 	//Add your GameObjects
 	GameObject paddle;
 	ASGE::Sprite* paddle_sprite;
-	int velocity = 700;
+	int velocity = 500;
 //Paddle movement bool
 	bool paddle_left = false;
 	bool paddle_right = false;
@@ -48,12 +51,13 @@ GameObject ball;
 	
 
 	int max_sprites = 50;
+	int blocks_hit = 0;
 	int block_width = 64;
 	int block_height = 32;
 	
 
 	//menu options
 	bool in_menu = true;
-
+	int player_life = 0;
 	
 };

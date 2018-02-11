@@ -2,16 +2,15 @@
 c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(67): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(74): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(75): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(252): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(265): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(281): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(253): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(266): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
 c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(282): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(316): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(332): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(333): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(359): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(360): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(361): warning C4551: function call missing argument list
+c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(283): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(329): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(342): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(343): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(381): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\m2-ratcliffe\source\repos\breakout-mikeratcliffe97\source\game.cpp(382): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
 LINK : warning LNK4098: defaultlib 'LIBCMTD' conflicts with use of other libs; use /NODEFAULTLIB:library
   LINK : /LTCG specified but no code generation required; remove /LTCG from the link command line to improve linker performance

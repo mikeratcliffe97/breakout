@@ -54,4 +54,7 @@
   <ItemGroup>
     <None Include="Game.props" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Feedback.txt" />
+  </ItemGroup>
 </Project>

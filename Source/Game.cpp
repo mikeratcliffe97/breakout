@@ -219,10 +219,12 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 			ball_direction.y_set(ball_direction.get_y() * -1);
 		}
 
+
+		//Floor Reset
 		if (ball_sprite->yPos() > game_height + 50)
 		{
 			reset(x_pos, y_pos);
-
+			player_life++;
 		}
 		
 		
@@ -233,16 +235,15 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 		}
 
 
-
+		//Block Collision
 		for (int i = 0; i < max_sprites; i++)
-		if (ball.spriteComponent()->getBoundingBox().isInside(blocks[i].spriteComponent()->getBoundingBox()) == true && blocks[i].is_visible == true)
-			//blocks[i].spriteComponent()->getBoundingBox().isInside(ball.spriteComponent()->getBoundingBox())
+		if ( blocks[i].spriteComponent()->getBoundingBox().isInside(ball.spriteComponent()->getBoundingBox()) == true && blocks[i].is_visible == true)
 		{
 			ball_direction.y_set(ball_direction.get_y() * -1);
 			blocks[i].is_visible = false;
+			blocks_hit++;
 
 		}
-
 		
 		//Paddle Movement speed
 		if (paddle_left)
@@ -282,6 +283,13 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 		y_pos += (velocity / 2) * ball_direction.get_y() * (us.delta_time.count() / 1000.f);
 		ball_sprite->xPos(x_pos);
 		ball_sprite->yPos(y_pos);
+	
+	//End Games
+		if (blocks_hit >= 50)
+		{
+			win();
+		}
+	
 	}
 	}
 
@@ -305,29 +313,31 @@ void BreakoutGame::render(const ASGE::GameTime &)
 
 	if (in_menu)
 	{
-		renderer->renderText("Welcome to Breakout \nPress Enter to start game", 200, 200, 1.0, ASGE::COLOURS::WHITE);
+		renderer->renderText("\tWelcome to Breakout \nBreak all bricks on screen. \nYou have 3 lives. \nLives are lost when you miss the ball.\nPress Enter to start game", 
+			200, 200, 1.0, ASGE::COLOURS::WHITE);
 	}
 	else
 	{
-	//	renderer->renderText("")
 		
+
+		if (player_life < 3)
+			{
+			std::string life_str = "LIVES LOST: " + std::to_string(player_life);
+		renderer->renderText(life_str, 450, 900, 1.0, ASGE::COLOURS::WHITE);
 		renderer->renderSprite(*paddle_sprite);
-		paddle_sprite->xPos(); //predefined in init
-		paddle_sprite->yPos(game_height - 100); //umnoving
-		
-		
-		
-		renderer->renderSprite(*ball_sprite);
-		
+			paddle_sprite->xPos(); //predefined in init
+			paddle_sprite->yPos(game_height - 100); //umnoving
 
 
-		int x_block_total = 0;
-		int y_block_total = 0;
 
-		for (int i = 0; i < max_sprites; i++)
-		{
-			
-			if (blocks[i].is_visible == true)
+			renderer->renderSprite(*ball_sprite);
+
+
+
+			int x_block_total = 0;
+			int y_block_total = 0;
+
+			for (int i = 0; i < max_sprites; i++)
 			{
 				blocks_sprites[i]->xPos(x_block_total * block_width);
 				blocks_sprites[i]->yPos(y_block_total * block_height);
@@ -338,19 +348,31 @@ void BreakoutGame::render(const ASGE::GameTime &)
 					x_block_total = 0;
 					y_block_total++;
 				}
+				if (blocks[i].is_visible == true)
+				{
+					renderer->renderSprite(*blocks_sprites[i]);
+				}
 
 
-				renderer->renderSprite(*blocks_sprites[i]);
 			}
-			
-
 			
 		}
 
+		else if (player_life >= 3)
+		{
+			lose();
+		}
+
+		else if (blocks_hit >= 10)
+		{
+			win();
+		}
 	}
-
-
+	
 }
+
+
+
 
 void BreakoutGame::reset(float& x_pos, float& y_pos)
 {
@@ -358,5 +380,15 @@ void BreakoutGame::reset(float& x_pos, float& y_pos)
 
 	x_pos = game_width / 2;
 	y_pos = game_height / 2;
-	getchar;
+	
+}
+
+void BreakoutGame::win()
+{
+	renderer->renderText("CONGRATULATIONS \nYOU WIN", 200, 200, 4.0, ASGE::COLOURS::TOMATO);
+}
+
+void BreakoutGame::lose()
+{
+	renderer->renderText("YOU LOST ALL YOUR LIVES \n Press Esc to Exit Game", 100, 200, 2.0, ASGE::COLOURS::TOMATO);
 }
