@@ -33,9 +33,4 @@ SpriteComponent* GameObject::spriteComponent()
 	return sprite_component;
 }
 
-/*SpriteComponent* GameObject::is_visible(block_visible)
-{
 
-}
-
-*/

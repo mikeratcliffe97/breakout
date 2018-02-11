@@ -40,7 +40,7 @@ private:
 GameObject ball;
 	ASGE::Sprite* ball_sprite;
 	Vector ball_direction{1, -2 };
-	void reset();
+	void reset(float& x_pos, float& y_pos);
 
 	//Block objects and data
 	GameObject blocks[50] = {};
