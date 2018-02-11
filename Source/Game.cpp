@@ -83,11 +83,11 @@ bool BreakoutGame::init()
 			return false;
 		}
 
-		if (block_visible)
-		{
+		
+		
 			blocks_sprites[i] = blocks[i].spriteComponent()->getSprite();
 		}
-	}
+	
 
 	
 	return true;
@@ -166,7 +166,6 @@ void BreakoutGame::keyHandler(const ASGE::SharedEventData data)
 	{
 		paddle_right = false;
 	}
-	
 }
 
 /**
@@ -218,21 +217,27 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 
 
 		//Cieling Collision
-		if ((ball_sprite->yPos() + ball_sprite->width() >= game_height) ||
-			(ball_sprite->yPos() < 0))
-		{
-			ball_direction.y_set(ball_direction.get_y() * -1);
-		}
-		//Paddle Collision
-		if ((ball_sprite->xPos() + ball_sprite->width() <= paddle_sprite->yPos()) + paddle_sprite->height() && 
-			ball_sprite->yPos() > paddle_sprite->yPos() &&
-			ball_sprite->yPos() + ball_sprite->height() > paddle_sprite->yPos() + paddle_sprite->height() &&
-			ball_sprite->xPos() < paddle_sprite->width() + paddle_sprite->xPos())
+		if (ball_sprite->yPos() < 0)
 		{
 			ball_direction.y_set(ball_direction.get_y() * -1);
 		}
 
+		if (ball_sprite->yPos() > game_height)
+		{
+			reset();
+		}
+		
+		
+		if (ball.spriteComponent()->getBoundingBox().isInside(paddle_sprite->xPos(), (paddle_sprite->xPos() + paddle_sprite->width())))
+		{
+			ball_direction.y_set(ball_direction.get_y() * -1);
+		}
 
+	/*	if (blocks->spriteComponent()->getBoundingBox.isInside(ball_sprite->xPos, ball_sprite->yPos))
+		{
+			blocks.
+				
+		}*/
 		//Paddle Movement speed
 		if (paddle_left)
 		{
@@ -246,7 +251,6 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 				paddle_left = false;
 			}
 		}
-
 
 		if (paddle_right)
 		{
@@ -315,17 +319,18 @@ void BreakoutGame::render(const ASGE::GameTime &)
 
 		for (int i = 0; i < max_sprites; i++)
 		{
-			
-			blocks_sprites[i]->xPos(x_block_total * block_width);
-			blocks_sprites[i]->yPos(y_block_total * block_height);
+			//if (is_visible == true)
+			//{
+				blocks_sprites[i]->xPos(x_block_total * block_width);
+				blocks_sprites[i]->yPos(y_block_total * block_height);
 
-			x_block_total++;
-			if (i == 9 || i == 19 || i == 29 || i == 39 || i == 49)
-			{
-				x_block_total = 0;
-				y_block_total++;
-			}
-			
+				x_block_total++;
+				if (i == 9 || i == 19 || i == 29 || i == 39 || i == 49)
+				{
+					x_block_total = 0;
+					y_block_total++;
+				}
+			//}
 			
 				renderer->renderSprite(*blocks_sprites[i]);
 					
@@ -337,4 +342,10 @@ void BreakoutGame::render(const ASGE::GameTime &)
 	}
 
 
+}
+
+void BreakoutGame::reset()
+{
+	ball_sprite->yPos(game_height / 2);
+	ball_sprite->xPos(game_width / 2);
 }

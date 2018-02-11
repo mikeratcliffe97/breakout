@@ -42,11 +42,12 @@ public:
 	*/
 	 SpriteComponent* spriteComponent();
 
-	// SpriteComponent* isVisible();
+//	bool is_visible(block_visible);
+
 
 private:
 
 	void freeSpriteComponent();	
 	SpriteComponent* sprite_component = nullptr;
-//	SpriteComponent* isVisible();
+	bool block_visible = true;
 };

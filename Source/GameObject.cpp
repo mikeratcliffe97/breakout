@@ -33,8 +33,9 @@ SpriteComponent* GameObject::spriteComponent()
 	return sprite_component;
 }
 
-/*SpriteComponent* isVisible();
+/*SpriteComponent* GameObject::is_visible(block_visible)
 {
 
-}*/
+}
 
+*/

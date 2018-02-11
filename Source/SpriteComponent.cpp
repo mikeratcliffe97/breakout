@@ -29,7 +29,6 @@ void SpriteComponent::freeSprite()
 	}
 }
 
-
 ASGE::Sprite* SpriteComponent::getSprite()
 {
 	return sprite;
@@ -46,3 +45,5 @@ rect SpriteComponent::getBoundingBox() const
 
 	return bounding_box;
 }
+
+//void SpriteComponent::isvi
