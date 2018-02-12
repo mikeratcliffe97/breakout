@@ -53,8 +53,8 @@ bool BreakoutGame::init()
 
 	key_callback_id = inputs->addCallbackFnc(
 		ASGE::E_KEY, &BreakoutGame::keyHandler, this);
-	
-	mouse_callback_id =inputs->addCallbackFnc(
+
+	mouse_callback_id = inputs->addCallbackFnc(
 		ASGE::E_MOUSE_CLICK, &BreakoutGame::clickHandler, this);
 
 
@@ -65,7 +65,7 @@ bool BreakoutGame::init()
 
 	paddle_sprite = paddle.spriteComponent()->getSprite();
 	paddle_sprite->xPos(game_width / 2);
-	
+
 	if (!ball.addSpriteComponent(renderer.get(), ".\\Resources\\Textures\\puzzlepack\\png\\ballGrey.png"))
 	{
 		return false;
@@ -77,15 +77,23 @@ bool BreakoutGame::init()
 
 	for (int i = 0; i < max_sprites; i++)
 	{
-		
+
 		if (!blocks[i].addSpriteComponent(renderer.get(), ".\\Resources\\Textures\\puzzlepack\\png\\element_red_rectangle.png"))
 		{
 			return false;
 		}
 		blocks_sprites[i] = blocks[i].spriteComponent()->getSprite();
 	}
-	
 
+	/*for (int i = 0; i < 10; i++)
+	{
+		if
+			(!blocks[i].addSpriteComponent(renderer.get(), ".\\Resources\\Textures\\puzzlepack\\element_blue_diamond.png"))
+		{
+			return false;
+		}
+	alt_blocks_sprites[i] = blocks[i].spriteComponent()->getSprite();
+	}*/
 	
 	return true;
 }
@@ -284,11 +292,7 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 		ball_sprite->xPos(x_pos);
 		ball_sprite->yPos(y_pos);
 	
-	//End Games
-		if (blocks_hit >= 50)
-		{
-			win();
-		}
+	
 	
 	}
 	}
@@ -320,7 +324,7 @@ void BreakoutGame::render(const ASGE::GameTime &)
 	{
 		
 
-		if (player_life < 3)
+		if (player_life < 3 && blocks_hit != 50)
 			{
 			std::string life_str = "LIVES LOST: " + std::to_string(player_life);
 		renderer->renderText(life_str, 450, 900, 1.0, ASGE::COLOURS::WHITE);
@@ -339,18 +343,25 @@ void BreakoutGame::render(const ASGE::GameTime &)
 
 			for (int i = 0; i < max_sprites; i++)
 			{
+				
+			
 				blocks_sprites[i]->xPos(x_block_total * block_width);
 				blocks_sprites[i]->yPos(y_block_total * block_height);
 
+
+			//	alt_blocks_sprites[i]->xPos(400 * alt_block_width)
+					
 				x_block_total++;
 				if (i == 9 || i == 19 || i == 29 || i == 39 || i == 49)
 				{
 					x_block_total = 0;
 					y_block_total++;
 				}
-				if (blocks[i].is_visible == true)
+					
+					if (blocks[i].is_visible == true)
 				{
 					renderer->renderSprite(*blocks_sprites[i]);
+				//	renderer->renderSprite(*alt_blocks_sprites[i]);
 				}
 
 
@@ -363,7 +374,7 @@ void BreakoutGame::render(const ASGE::GameTime &)
 			lose();
 		}
 
-		else if (blocks_hit >= 10)
+		else 
 		{
 			win();
 		}
@@ -385,10 +396,10 @@ void BreakoutGame::reset(float& x_pos, float& y_pos)
 
 void BreakoutGame::win()
 {
-	renderer->renderText("CONGRATULATIONS \nYOU WIN", 200, 200, 4.0, ASGE::COLOURS::TOMATO);
+	renderer->renderText("CONGRATULATIONS \nYOU WIN", 100, 400, 2.0, ASGE::COLOURS::TOMATO);
 }
 
 void BreakoutGame::lose()
 {
-	renderer->renderText("YOU LOST ALL YOUR LIVES \n Press Esc to Exit Game", 100, 200, 2.0, ASGE::COLOURS::TOMATO);
+	renderer->renderText("YOU LOST ALL YOUR LIVES \n Press Esc to Exit Game", 100, 400, 2.0, ASGE::COLOURS::TOMATO);
 }

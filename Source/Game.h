@@ -48,13 +48,15 @@ GameObject ball;
 	//Block objects and data
 	GameObject blocks[50] = {};
 	ASGE::Sprite* blocks_sprites[50] = {};
-	
+	ASGE::Sprite* alt_blocks_sprites[10] = {};
 
 	int max_sprites = 50;
 	int blocks_hit = 0;
 	int block_width = 64;
 	int block_height = 32;
 	
+	int alt_block_width = 48;
+	int alt_block_height = 48;
 
 	//menu options
 	bool in_menu = true;
