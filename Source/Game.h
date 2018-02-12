@@ -23,6 +23,8 @@ private:
 	void setupResolution();
 
 	virtual void update(const ASGE::GameTime &) override;
+	void BrickCollider();
+	void updateBall(float &x_pos, const ASGE::GameTime & us, float &y_pos);
 	virtual void render(const ASGE::GameTime &) override;
 
 	int  key_callback_id = -1;	        /**< Key Input Callback ID. */
@@ -34,7 +36,7 @@ private:
 	//Add your GameObjects
 	GameObject paddle;
 	ASGE::Sprite* paddle_sprite;
-	int velocity = 500;
+	
 //Paddle movement bool
 	bool paddle_left = false;
 	bool paddle_right = false;
@@ -42,13 +44,15 @@ private:
 	
 GameObject ball;
 	ASGE::Sprite* ball_sprite;
-	Vector ball_direction{1, -2 };
+	vector2 ball_direction{1, 1 };
 	void reset(float& x_pos, float& y_pos);
 
 	//Block objects and data
 	GameObject blocks[50] = {};
 	ASGE::Sprite* blocks_sprites[50] = {};
-	ASGE::Sprite* alt_blocks_sprites[10] = {};
+	
+	GameObject gems[25] = {};
+	ASGE::Sprite* gem_sprites[25] = {};
 
 	int max_sprites = 50;
 	int blocks_hit = 0;
@@ -60,6 +64,6 @@ GameObject ball;
 
 	//menu options
 	bool in_menu = true;
-	int player_life = 0;
+	int player_life = 3;
 	
 };

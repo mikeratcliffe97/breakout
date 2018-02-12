@@ -50,3 +50,23 @@ vector2 vector2::operator*(float scalar)
 	vec.y *= scalar;
 	return vec;
 }
+
+void vector2::x_set(float x_vec_val)
+{
+	x = x_vec_val;
+}
+
+void vector2::y_set(float y_vec_val)
+{
+	y = y_vec_val;
+}
+
+float vector2::get_x()
+{
+	return x;
+}
+
+float vector2::get_y()
+{
+	return y;
+}

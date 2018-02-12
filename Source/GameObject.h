@@ -43,7 +43,7 @@ public:
 	 SpriteComponent* spriteComponent();
 
 	 bool is_visible = true;
-
+	 int velocity = 650;
 
 private:
 

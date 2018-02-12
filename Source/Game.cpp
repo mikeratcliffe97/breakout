@@ -7,7 +7,7 @@
 
 #include "Game.h"
 #include "Vector2.h"
-#include "Vector1.h"
+//#include "Vector1.h"
 
 /**
 *   @brief   Default Constructor.
@@ -151,6 +151,7 @@ void BreakoutGame::keyHandler(const ASGE::SharedEventData data)
 			key->action == ASGE::KEYS::KEY_PRESSED)
 		{
 			paddle_left = true;
+			 
 		}
 
 	if (key->key == ASGE::KEYS::KEY_A &&
@@ -206,59 +207,46 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 		
 
 		auto paddle_pos = paddle_sprite->xPos();
-
-
 		auto y_pos = ball_sprite->yPos();
 		auto x_pos = ball_sprite->xPos();
 
-	
 		//Wall Collision
 		if ((ball_sprite->xPos() + ball_sprite->width() >= game_width) ||
 			(ball_sprite->xPos() < 0))
 		{
 			ball_direction.x_set(ball_direction.get_x() * -1);
-
 		}
-
-
+		
 		//Ceiling Collision
 		if (ball_sprite->yPos() < 0)
 		{
 			ball_direction.y_set(ball_direction.get_y() * -1);
 		}
 
-
-		//Floor Reset
+//Floor Reset
 		if (ball_sprite->yPos() > game_height + 50)
 		{
 			reset(x_pos, y_pos);
-			player_life++;
+			--player_life;
 		}
 		
-		
-		if (ball.spriteComponent()->getBoundingBox().isInside(paddle.spriteComponent()->getBoundingBox()))
+		//Paddle Collision
+		if (ball.spriteComponent()->getBoundingBox().isInside(
+			paddle.spriteComponent()->getBoundingBox()))
 		{
 			ball_direction.y_set(ball_direction.get_y() * -1);
 		//	ball_direction.x_set(ball_direction.get_x() * -1);
 		}
 
 
-		//Block Collision
-		for (int i = 0; i < max_sprites; i++)
-		if ( blocks[i].spriteComponent()->getBoundingBox().isInside(ball.spriteComponent()->getBoundingBox()) == true && blocks[i].is_visible == true)
-		{
-			ball_direction.y_set(ball_direction.get_y() * -1);
-			blocks[i].is_visible = false;
-			blocks_hit++;
-
-		}
+		BrickCollider();
 		
 		//Paddle Movement speed
 		if (paddle_left)
 		{
 			if (paddle_sprite, paddle_pos >= 0)
 			{
-				paddle_pos -= velocity * (us.delta_time.count() / 1000.f);
+				paddle_pos -= paddle.velocity * (us.delta_time.count() / 1000.f);
 			}
 
 			else
@@ -271,7 +259,7 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 		{
 			if (paddle_sprite, paddle_pos + paddle_sprite->width()  <= game_width)
 			{
-				paddle_pos += velocity * (us.delta_time.count() / 1000.f);
+				paddle_pos += paddle.velocity * (us.delta_time.count() / 1000.f);
 			}
 
 			else
@@ -285,17 +273,38 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 		//Position Updates
 		paddle_sprite->xPos(paddle_pos);
 		
+		updateBall(x_pos, us, y_pos);
 
-		//Ball Speed
-		x_pos += (velocity / 2) * ball_direction.get_x() * (us.delta_time.count() / 1000.f);
-		y_pos += (velocity / 2) * ball_direction.get_y() * (us.delta_time.count() / 1000.f);
-		ball_sprite->xPos(x_pos);
-		ball_sprite->yPos(y_pos);
-	
-	
-	
 	}
 	}
+
+void BreakoutGame::BrickCollider()
+{
+	//Block Collision
+	for (int i = 0; i < max_sprites; i++)
+	{
+		if (blocks[i].spriteComponent()->getBoundingBox().isInside(
+			ball.spriteComponent()->getBoundingBox()) == true
+			&& blocks[i].is_visible == true)
+		{
+			ball_direction.y_set(ball_direction.get_y() * -1);
+			blocks[i].is_visible = false;
+			blocks_hit++;
+			break;
+		}
+	}
+}
+
+void BreakoutGame::updateBall(float &x_pos, const ASGE::GameTime & us, float &y_pos)
+{
+	
+	
+	//Ball Speed
+	x_pos += (ball.velocity / 2) * ball_direction.get_x() * (us.delta_time.count() / 1000.f);
+	y_pos += (ball.velocity / 2) * ball_direction.get_y() * (us.delta_time.count() / 1000.f);
+	ball_sprite->xPos(x_pos);
+	ball_sprite->yPos(y_pos);
+}
 
 	
 
@@ -317,72 +326,67 @@ void BreakoutGame::render(const ASGE::GameTime &)
 
 	if (in_menu)
 	{
-		renderer->renderText("\tWelcome to Breakout \nBreak all bricks on screen. \nYou have 3 lives. \nLives are lost when you miss the ball.\nPress Enter to start game", 
+		renderer->renderText("\tWelcome to Breakout \nBreak all bricks on screen. \nYou have 3 lives. \nLives are lost when you miss the ball.\nPress Enter to start game",
 			200, 200, 1.0, ASGE::COLOURS::WHITE);
 	}
-	else
+	else if (player_life > 0 && blocks_hit != 50)
 	{
-		
-
-		if (player_life < 3 && blocks_hit != 50)
-			{
-			std::string life_str = "LIVES LOST: " + std::to_string(player_life);
+		std::string life_str = "LIVES: " + std::to_string(player_life);
 		renderer->renderText(life_str, 450, 900, 1.0, ASGE::COLOURS::WHITE);
 		renderer->renderSprite(*paddle_sprite);
-			paddle_sprite->xPos(); //predefined in init
-			paddle_sprite->yPos(game_height - 100); //umnoving
+		paddle_sprite->xPos(); //predefined in init
+		paddle_sprite->yPos(game_height - 100); //umnoving
 
+		renderer->renderSprite(*ball_sprite);
 
+		int x_block_total = 0;
+		int y_block_total = 0;
 
-			renderer->renderSprite(*ball_sprite);
-
-
-
-			int x_block_total = 0;
-			int y_block_total = 0;
-
-			for (int i = 0; i < max_sprites; i++)
+		for (int i = 0; i < max_sprites; i++)
+		{
+			blocks_sprites[i]->xPos(x_block_total * block_width);
+			blocks_sprites[i]->yPos(y_block_total * block_height);
+			if (blocks_hit >= 10)
 			{
-				
-			
-				blocks_sprites[i]->xPos(x_block_total * block_width);
-				blocks_sprites[i]->yPos(y_block_total * block_height);
+				blocks_sprites[i]->yPos((y_block_total * block_height) + 30);
+			}
 
+			if (blocks_hit >= 20)
+			{
+				blocks_sprites[i]->yPos((y_block_total * block_height) + 60);
+			}
+
+			if (blocks_hit >= 30)
+			{
+				blocks_sprites[i]->yPos((y_block_total * block_height) + 90);
+			}
 
 			//	alt_blocks_sprites[i]->xPos(400 * alt_block_width)
-					
-				x_block_total++;
-				if (i == 9 || i == 19 || i == 29 || i == 39 || i == 49)
-				{
-					x_block_total = 0;
-					y_block_total++;
-				}
-					
-					if (blocks[i].is_visible == true)
-				{
-					renderer->renderSprite(*blocks_sprites[i]);
-				//	renderer->renderSprite(*alt_blocks_sprites[i]);
-				}
-
-
+			x_block_total++;
+			if (i == 9 || i == 19 || i == 29 || i == 39 || i == 49)
+			{
+				x_block_total = 0;
+				y_block_total++;
 			}
-			
-		}
 
-		else if (player_life >= 3)
-		{
-			lose();
-		}
-
-		else 
-		{
-			win();
+			if (blocks[i].is_visible == true)
+			{
+				renderer->renderSprite(*blocks_sprites[i]);
+				//	renderer->renderSprite(*alt_blocks_sprites[i]);
+			}
 		}
 	}
-	
+
+	else if (player_life <= 0)
+	{
+		lose();
+	}
+
+	else
+	{
+		win();
+	}
 }
-
-
 
 
 void BreakoutGame::reset(float& x_pos, float& y_pos)
