@@ -85,15 +85,15 @@ bool BreakoutGame::init()
 		blocks_sprites[i] = blocks[i].spriteComponent()->getSprite();
 	}
 
-	/*for (int i = 0; i < 10; i++)
+	for (int i = 0; i < max_gems; i++)
 	{
 		if
-			(!blocks[i].addSpriteComponent(renderer.get(), ".\\Resources\\Textures\\puzzlepack\\element_blue_diamond.png"))
+			(!gems[i].addSpriteComponent(renderer.get(), ".\\Resources\\Textures\\puzzlepack\\png\\element_blue_diamond.png"))
 		{
 			return false;
 		}
-	alt_blocks_sprites[i] = blocks[i].spriteComponent()->getSprite();
-	}*/
+		gem_sprites[i] = gems[i].spriteComponent()->getSprite();
+	}
 	
 	return true;
 }
@@ -288,16 +288,17 @@ void BreakoutGame::BrickCollider()
 			&& blocks[i].is_visible == true)
 		{
 			ball_direction.y_set(ball_direction.get_y() * -1);
+	
 			blocks[i].is_visible = false;
 			blocks_hit++;
 			break;
 		}
+		
 	}
 }
 
 void BreakoutGame::updateBall(float &x_pos, const ASGE::GameTime & us, float &y_pos)
 {
-	
 	
 	//Ball Speed
 	x_pos += (ball.velocity / 2) * ball_direction.get_x() * (us.delta_time.count() / 1000.f);
@@ -339,40 +340,21 @@ void BreakoutGame::render(const ASGE::GameTime &)
 
 		renderer->renderSprite(*ball_sprite);
 
-		int x_block_total = 0;
-		int y_block_total = 0;
+	
+		BlockUpdate();
 
-		for (int i = 0; i < max_sprites; i++)
+		if (blocks_hit >= 5 || blocks_hit >= 10 || blocks_hit >= 15)
 		{
-			blocks_sprites[i]->xPos(x_block_total * block_width);
-			blocks_sprites[i]->yPos(y_block_total * block_height);
-			if (blocks_hit >= 10)
+			for (int i = 0; i < max_gems; i++)
 			{
-				blocks_sprites[i]->yPos((y_block_total * block_height) + 30);
-			}
+				gem_sprites[i]->xPos(game_width / 2);
+				gem_sprites[i]->yPos(game_height /2);
 
-			if (blocks_hit >= 20)
-			{
-				blocks_sprites[i]->yPos((y_block_total * block_height) + 60);
-			}
 
-			if (blocks_hit >= 30)
-			{
-				blocks_sprites[i]->yPos((y_block_total * block_height) + 90);
-			}
-
-			//	alt_blocks_sprites[i]->xPos(400 * alt_block_width)
-			x_block_total++;
-			if (i == 9 || i == 19 || i == 29 || i == 39 || i == 49)
-			{
-				x_block_total = 0;
-				y_block_total++;
-			}
-
-			if (blocks[i].is_visible == true)
-			{
-				renderer->renderSprite(*blocks_sprites[i]);
-				//	renderer->renderSprite(*alt_blocks_sprites[i]);
+				if (gems[i].is_visible == true)
+				{
+					renderer->renderSprite(*gem_sprites[i]);
+				}
 			}
 		}
 	}
@@ -388,11 +370,50 @@ void BreakoutGame::render(const ASGE::GameTime &)
 	}
 }
 
+void BreakoutGame::BlockUpdate()
+{
+	int x_block_total = 0;
+	int y_block_total = 0;
+
+	for (int i = 0; i < max_sprites; i++)
+	{
+		blocks_sprites[i]->xPos(x_block_total * block_width);
+		blocks_sprites[i]->yPos(y_block_total * block_height);
+		if (blocks_hit >= 10)
+		{
+			blocks_sprites[i]->yPos((y_block_total * block_height) + 30);
+		}
+
+		if (blocks_hit >= 20)
+		{
+			blocks_sprites[i]->yPos((y_block_total * block_height) + 60);
+		}
+
+		if (blocks_hit >= 30)
+		{
+			blocks_sprites[i]->yPos((y_block_total * block_height) + 90);
+		}
+
+	
+		x_block_total++;
+		if (i == 9 || i == 19 || i == 29 || i == 39 || i == 49)
+		{
+			x_block_total = 0;
+			y_block_total++;
+		}
+		
+		if (blocks[i].is_visible == true)
+		{
+			renderer->renderSprite(*blocks_sprites[i]);
+			
+		}
+	}
+}
+
 
 void BreakoutGame::reset(float& x_pos, float& y_pos)
 {
 	
-
 	x_pos = game_width / 2;
 	y_pos = game_height / 2;
 	
