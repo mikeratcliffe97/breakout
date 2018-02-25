@@ -23,6 +23,7 @@ private:
 	void setupResolution();
 
 	virtual void update(const ASGE::GameTime &) override;
+	void PaddleMovement(float &paddle_pos, const ASGE::GameTime & us);
 	void BrickCollider();
 	void updateBall(float &x_pos, const ASGE::GameTime & us, float &y_pos);
 	virtual void render(const ASGE::GameTime &) override;

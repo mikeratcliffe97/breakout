@@ -113,7 +113,8 @@ void BreakoutGame::setupResolution()
 	// here are some abritrary values for you to adjust as you see fit
 	// https://www.gamasutra.com/blogs/KenanBolukbasi/20171002/306822/Scaling_and_MultiResolution_in_2D_Games.php
 	game_width = 640;
-	game_height = 920;
+	game_height = 840;
+	
 }
 
 /**
@@ -235,48 +236,53 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 			paddle.spriteComponent()->getBoundingBox()))
 		{
 			ball_direction.y_set(ball_direction.get_y() * -1);
-		//	ball_direction.x_set(ball_direction.get_x() * -1);
+			ball_direction.x_set(ball_direction.get_x() * 1);
 		}
 
 
 		BrickCollider();
 		
-		//Paddle Movement speed
-		if (paddle_left)
-		{
-			if (paddle_sprite, paddle_pos >= 0)
-			{
-				paddle_pos -= paddle.velocity * (us.delta_time.count() / 1000.f);
-			}
-
-			else
-			{
-				paddle_left = false;
-			}
-		}
-
-		if (paddle_right)
-		{
-			if (paddle_sprite, paddle_pos + paddle_sprite->width()  <= game_width)
-			{
-				paddle_pos += paddle.velocity * (us.delta_time.count() / 1000.f);
-			}
-
-			else
-			{
-				paddle_right = false;
-			}
-
-		}
-
-		
-		//Position Updates
-		paddle_sprite->xPos(paddle_pos);
+		PaddleMovement(paddle_pos, us);
 		
 		updateBall(x_pos, us, y_pos);
 
 	}
 	}
+
+void BreakoutGame::PaddleMovement(float &paddle_pos, const ASGE::GameTime & us)
+{
+	//Paddle Movement speed
+	if (paddle_left)
+	{
+		if (paddle_sprite, paddle_pos >= 0)
+		{
+			paddle_pos -= paddle.velocity * (us.delta_time.count() / 1000.f);
+		}
+
+		else
+		{
+			paddle_left = false;
+		}
+	}
+
+	if (paddle_right)
+	{
+		if (paddle_sprite, paddle_pos + paddle_sprite->width() <= game_width)
+		{
+			paddle_pos += paddle.velocity * (us.delta_time.count() / 1000.f);
+		}
+
+		else
+		{
+			paddle_right = false;
+		}
+
+	}
+
+
+	//Position Updates
+	paddle_sprite->xPos(paddle_pos);
+}
 
 void BreakoutGame::BrickCollider()
 {
@@ -288,13 +294,23 @@ void BreakoutGame::BrickCollider()
 			&& blocks[i].is_visible == true)
 		{
 			ball_direction.y_set(ball_direction.get_y() * -1);
-	
+			ball_direction.x_set(ball_direction.get_x() * 1);
+			ball_direction.normalise();
 			blocks[i].is_visible = false;
 			blocks_hit++;
 			break;
 		}
 		
 	}
+
+
+	/*for (int i = 0; i < max_gems; i++)
+		if (gems[i].spriteComponent()->getBoundingBox().isInside(
+			paddle.spriteComponent()->getBoundingBox()) == true
+			&& gems[i].is_visible == true)
+		{
+
+		}*/
 }
 
 void BreakoutGame::updateBall(float &x_pos, const ASGE::GameTime & us, float &y_pos)
@@ -321,8 +337,10 @@ void BreakoutGame::updateBall(float &x_pos, const ASGE::GameTime & us, float &y_
 			 swapped accordingly and the image shown.
 *   @return  void
 */
-void BreakoutGame::render(const ASGE::GameTime &)
+void BreakoutGame::render(const ASGE::GameTime & us)
 {
+	int elapsed_time = (us.game_time.count);
+
 	renderer->setFont(0);
 
 	if (in_menu)
@@ -343,8 +361,8 @@ void BreakoutGame::render(const ASGE::GameTime &)
 	
 		BlockUpdate();
 
-		if (blocks_hit >= 5 || blocks_hit >= 10 || blocks_hit >= 15)
-		{
+		//if ()
+		//{
 			for (int i = 0; i < max_gems; i++)
 			{
 				gem_sprites[i]->xPos(game_width / 2);
@@ -356,7 +374,7 @@ void BreakoutGame::render(const ASGE::GameTime &)
 					renderer->renderSprite(*gem_sprites[i]);
 				}
 			}
-		}
+		//}
 	}
 
 	else if (player_life <= 0)
