@@ -34,3 +34,8 @@ SpriteComponent* GameObject::spriteComponent()
 }
 
 
+bool GameObject::isvisible() const { return visibility; }
+
+void GameObject::setVisibility(bool v) { visibility = v; }
+
+

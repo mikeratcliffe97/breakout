@@ -23,10 +23,9 @@ private:
 	void setupResolution();
 
 	virtual void update(const ASGE::GameTime &) override;
+	void BallCollider(float &x_pos, float &y_pos);
 	void PaddleMovement(float &paddle_pos, const ASGE::GameTime & us);
 	void BrickCollider();
-	void GemCollider();
-	void GemSpawn(float& gem_y_pos, const ASGE::GameTime & us);
 	void updateBall(float &x_pos, const ASGE::GameTime & us, float &y_pos);
 	virtual void render(const ASGE::GameTime &) override;
 
@@ -46,6 +45,8 @@ private:
 	bool paddle_left = false;
 	bool paddle_right = false;
 	
+	float elapsed_time = 0;
+
 	
 GameObject ball;
 	ASGE::Sprite* ball_sprite;
@@ -54,10 +55,10 @@ GameObject ball;
 
 	//Block objects and data
 	GameObject blocks[50] = {};
-	ASGE::Sprite* blocks_sprites[50] = {};
+	//ASGE::Sprite* blocks_sprites[50] = {};
 	
 	GameObject gems[5] = {};
-	ASGE::Sprite* gem_sprites[5] = {};
+	//ASGE::Sprite* gem_sprites[5] = {};
 
 	int max_sprites = 50;
 	int blocks_hit = 0;

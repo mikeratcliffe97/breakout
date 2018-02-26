@@ -42,11 +42,14 @@ public:
 	*/
 	 SpriteComponent* spriteComponent();
 
-	 bool is_visible = true;
+	 bool isvisible() const;
+	 void setVisibility(bool v);
+	 
 	 int velocity = 650;
 
 private:
 
+	bool visibility = true;
 	void freeSpriteComponent();	
 	SpriteComponent* sprite_component = nullptr;
 	

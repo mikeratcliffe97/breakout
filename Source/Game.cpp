@@ -16,6 +16,8 @@
 */
 BreakoutGame::BreakoutGame()
 {
+	srand(time(NULL));
+
 }
 
 /**
@@ -82,7 +84,8 @@ bool BreakoutGame::init()
 		{
 			return false;
 		}
-		blocks_sprites[i] = blocks[i].spriteComponent()->getSprite();
+		ASGE::Sprite* block_sprite = blocks[i].spriteComponent()->getSprite();
+		
 	}
 
 	for (int i = 0; i < max_gems; i++)
@@ -92,9 +95,15 @@ bool BreakoutGame::init()
 		{
 			return false;
 		}
-		gem_sprites[i] = gems[i].spriteComponent()->getSprite();
+		
+		gems[i].setVisibility(false);
+		ASGE::Sprite* gem_sprite = gems[i].spriteComponent()->getSprite();
+		gem_sprite->yPos(rand() % 1 + -2000);
+		gem_sprite->xPos(1 + rand() % game_width - gem_width);
+
 	}
-	
+
+	gems[0].setVisibility(true);
 	return true;
 }
 
@@ -203,53 +212,124 @@ void BreakoutGame::clickHandler(const ASGE::SharedEventData data)
 */
 void BreakoutGame::update(const ASGE::GameTime& us)
 {
-	
+
 	if (!in_menu)
 	{
+
+			elapsed_time += (us.game_time.count() / 1000);
+			int gem_drop = 10;
 		
 
 		auto paddle_pos = paddle_sprite->xPos();
+
 		auto y_pos = ball_sprite->yPos();
 		auto x_pos = ball_sprite->xPos();
 
-		//Wall Collision
-		if ((ball_sprite->xPos() + ball_sprite->width() >= game_width) ||
-			(ball_sprite->xPos() < 0))
-		{
-			ball_direction.x_set(ball_direction.get_x() * -1);
-		}
-
-		//Ceiling Collision
-		if (ball_sprite->yPos() < 0)
-		{
-			ball_direction.y_set(ball_direction.get_y() * -1);
-		}
-
-		//Floor Reset
-		if (ball_sprite->yPos() > game_height + 50)
-		{
-			reset(x_pos, y_pos);
-			--player_life;
-		}
-
-		//Paddle Collision
-		if (ball.spriteComponent()->getBoundingBox().isInside(
-			paddle.spriteComponent()->getBoundingBox()))
-		{
-			ball_direction.y_set(ball_direction.get_y() * -1);
-			ball_direction.x_set(ball_direction.get_x() * 1);
-		}
+		BallCollider(x_pos, y_pos);
 
 
 		BrickCollider();
-		GemCollider();
+
 
 		PaddleMovement(paddle_pos, us);
 
 		updateBall(x_pos, us, y_pos);
 
-		
+		for (int i = 0; i < max_gems; i++)
+		{
 
+			if (elapsed_time >= gem_drop)
+			{
+
+				if (gems[i].isvisible())
+				{
+
+					ASGE::Sprite* gem_sprite = gems[i].spriteComponent()->getSprite();
+
+					float gem_y_pos = gem_sprite->yPos();
+
+					gem_y_pos += 150 * (us.delta_time.count() / 1000.f);
+					gem_sprite->yPos(gem_y_pos);
+
+
+					if (gems[i].spriteComponent()->getBoundingBox().isInside(
+						paddle.spriteComponent()->getBoundingBox()) == true
+						&& gems[i].isvisible())
+					{
+						gems[i].spriteComponent()->getSprite()->xPos(rand() % 1 + game_width - gem_width);
+						gems[i].spriteComponent()->getSprite()->yPos(rand() % 1 + -200);
+
+						score += 10000;
+
+
+						break;
+					}
+
+					if (gem_sprite->yPos() >= game_height)
+					{
+						gems[i].spriteComponent()->getSprite()->xPos(rand() % 1 + game_width - gem_width);
+						gems[i].spriteComponent()->getSprite()->yPos(rand() % 1 + -200);
+
+						break;
+
+					}
+
+					elapsed_time = 0;
+				}
+			}
+		}
+	}
+}
+
+void BreakoutGame::BallCollider(float &x_pos, float &y_pos)
+{
+	//Wall Collision
+	if ((ball_sprite->xPos() + ball_sprite->width() >= game_width) ||
+		(ball_sprite->xPos() < 0))
+	{
+		ball_direction.x_set(ball_direction.get_x() * -1);
+	}
+
+	//Ceiling Collision
+	if (ball_sprite->yPos() < 0)
+	{
+		ball_direction.y_set(ball_direction.get_y() * -1);
+	}
+
+	//Floor Reset
+	if (ball_sprite->yPos() > game_height + 50)
+	{
+		reset(x_pos, y_pos);
+		--player_life;
+	}
+
+	//Paddle Collision
+	if (ball.spriteComponent()->getBoundingBox().isInside(
+		paddle.spriteComponent()->getBoundingBox()))
+	{
+		ball_direction.y_set(ball_direction.get_y() * -1);
+		ball_direction.x_set(ball_direction.get_x() * 1);
+	}
+}
+
+void BreakoutGame::BrickCollider()
+{
+	//Block Collision
+	for (int i = 0; i < max_sprites; i++)
+	{
+		if (blocks[i].spriteComponent()->getBoundingBox().isInside(
+			ball.spriteComponent()->getBoundingBox()) == true
+			&& blocks[i].isvisible())
+		{
+			ball_direction.y_set(ball_direction.get_y() * -1);
+			ball_direction.x_set(ball_direction.get_x() * 1);
+			ball_direction.normalise();
+			blocks[i].setVisibility(false);
+			blocks_hit++;
+			score+=150;
+			break;
+		}
+		
 	}
 }
 
@@ -288,26 +368,6 @@ void BreakoutGame::PaddleMovement(float &paddle_pos, const ASGE::GameTime & us)
 	paddle_sprite->xPos(paddle_pos);
 }
 
-void BreakoutGame::BrickCollider()
-{
-	//Block Collision
-	for (int i = 0; i < max_sprites; i++)
-	{
-		if (blocks[i].spriteComponent()->getBoundingBox().isInside(
-			ball.spriteComponent()->getBoundingBox()) == true
-			&& blocks[i].is_visible == true)
-		{
-			ball_direction.y_set(ball_direction.get_y() * -1);
-			ball_direction.x_set(ball_direction.get_x() * 1);
-			ball_direction.normalise();
-			blocks[i].is_visible = false;
-			blocks_hit++;
-			score++;
-			break;
-		}
-		
-	}
-}
 
 void BreakoutGame::updateBall(float &x_pos, const ASGE::GameTime & us, float &y_pos)
 {
@@ -328,11 +388,9 @@ void BreakoutGame::updateBall(float &x_pos, const ASGE::GameTime & us, float &y_
 */
 void BreakoutGame::render(const ASGE::GameTime & us)
 {
-	int rand_pos = (rand() % game_width);
-	int elapsed_time = (us.game_time.count() / 1000 );
-	int gem_drop1 = 10;
-	int gem_drop2 = 15;
-	int gem_drop3 = 20;
+	//int rand_pos = (rand() % game_width);
+	
+	
 
 	renderer->setFont(0);
 
@@ -353,37 +411,17 @@ void BreakoutGame::render(const ASGE::GameTime & us)
 
 		renderer->renderSprite(*ball_sprite);
 
-
 		BlockUpdate();
-
+	
 
 		for (int i = 0; i < max_gems; i++)
 		{
-			
-			if (elapsed_time >= gem_drop1)
+			if (gems[i].isvisible())
 			{
-				auto gem_y_pos = gem_sprites[i]->yPos();
-				gem_sprites[i]->xPos(game_width / 3);
-				GemSpawn(gem_y_pos, us);
+				ASGE::Sprite* gem_sprite = gems[i].spriteComponent()->getSprite();
+				renderer->renderSprite(*gem_sprite);
 			}
-			if (elapsed_time >= gem_drop2)
-			{
-				auto gem_y_pos = gem_sprites[i]->yPos();
-				gem_sprites[i]->xPos(game_width / 1.5);
-				GemSpawn(gem_y_pos, us);
-			}
-			if (elapsed_time >= gem_drop3)
-			{
-				auto gem_y_pos = gem_sprites[i]->yPos();
-				gem_sprites[i]->xPos(game_width - 80);
-				GemSpawn(gem_y_pos, us);
-			}
-
-			
 		}
-	
-
-	
 	}
 
 	else if (player_life <= 0)
@@ -404,21 +442,24 @@ void BreakoutGame::BlockUpdate()
 
 	for (int i = 0; i < max_sprites; i++)
 	{
-		blocks_sprites[i]->xPos(x_block_total * block_width);
-		blocks_sprites[i]->yPos(y_block_total * block_height);
+		ASGE::Sprite* block_sprite = blocks[i].spriteComponent()->getSprite();
+		
+		blocks[i].spriteComponent()->getSprite()->xPos(x_block_total * block_width);
+		blocks[i].spriteComponent()->getSprite()->yPos(y_block_total * block_height);
+		
 		if (blocks_hit >= 10)
 		{
-			blocks_sprites[i]->yPos((y_block_total * block_height) + 30);
+			blocks[i].spriteComponent()->getSprite()->yPos((y_block_total * block_height) + 30);
 		}
 
 		if (blocks_hit >= 20)
 		{
-			blocks_sprites[i]->yPos((y_block_total * block_height) + 60);
+			blocks[i].spriteComponent()->getSprite()->yPos((y_block_total * block_height) + 60);
 		}
 
 		if (blocks_hit >= 30)
 		{
-			blocks_sprites[i]->yPos((y_block_total * block_height) + 90);
+			blocks[i].spriteComponent()->getSprite()->yPos((y_block_total * block_height) + 90);
 		}
 
 	
@@ -429,49 +470,16 @@ void BreakoutGame::BlockUpdate()
 			y_block_total++;
 		}
 		
-		if (blocks[i].is_visible == true)
+		if (blocks[i].isvisible())
 		{
-			renderer->renderSprite(*blocks_sprites[i]);
+			renderer->renderSprite(*blocks[i].spriteComponent()->getSprite());
 			
 		}
+
 	}
-}
-
-void BreakoutGame::GemCollider()
-{
-
-	for (int i = 0; i < 5; i++)
-	{
-		
-		if (gems[i].spriteComponent()->getBoundingBox().isInside(
-			paddle.spriteComponent()->getBoundingBox()) == true
-			&& gems[i].is_visible == true)
-		{
-			gems[i].is_visible = false;
-			score++;
-			break;
-		}
-	}
-}
-
-void BreakoutGame::GemSpawn(float& gem_y_pos, const ASGE::GameTime & us)
-{
-	
-
-	for (int i = 0; i < max_gems; i++)
-	{
-	//	gem_y_pos = 0;
-		gem_y_pos += 10 * (us.delta_time.count() / 1000.f);
-		
-		if (gems[i].is_visible == true)
-		{
-			renderer->renderSprite(*gem_sprites[i]);
-		}
-		gem_sprites[i]->yPos(gem_y_pos);
-	}
-
 	
 }
+
 
 void BreakoutGame::reset(float& x_pos, float& y_pos)
 {
@@ -483,7 +491,9 @@ void BreakoutGame::reset(float& x_pos, float& y_pos)
 
 void BreakoutGame::win()
 {
-	renderer->renderText("CONGRATULATIONS \nYOU WIN", 100, 400, 2.0, ASGE::COLOURS::TOMATO);
+	renderer->renderText("CONGRATULATIONS \nYOU WIN", 100, 400, 2.0, ASGE::COLOURS::RED);
+	std::string score_str = "SCORE WAS:  " + std::to_string(score);
+	renderer->renderText(score_str, 100, 450, 1.0, ASGE::COLOURS::RED);
 }
 
 void BreakoutGame::lose()
