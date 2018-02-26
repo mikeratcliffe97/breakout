@@ -25,6 +25,8 @@ private:
 	virtual void update(const ASGE::GameTime &) override;
 	void PaddleMovement(float &paddle_pos, const ASGE::GameTime & us);
 	void BrickCollider();
+	void GemCollider();
+	void GemSpawn(float& gem_y_pos, const ASGE::GameTime & us);
 	void updateBall(float &x_pos, const ASGE::GameTime & us, float &y_pos);
 	virtual void render(const ASGE::GameTime &) override;
 
@@ -65,9 +67,11 @@ GameObject ball;
 	int max_gems = 5;
 	int gem_width = 48;
 	int gem_height = 48;
-
+	int gems_caught = 0;
 	//menu options
 	bool in_menu = true;
 	int player_life = 3;
+	int score = (0 + gems_caught);
+	
 	
 };

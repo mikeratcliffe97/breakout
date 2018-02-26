@@ -113,7 +113,7 @@ void BreakoutGame::setupResolution()
 	// here are some abritrary values for you to adjust as you see fit
 	// https://www.gamasutra.com/blogs/KenanBolukbasi/20171002/306822/Scaling_and_MultiResolution_in_2D_Games.php
 	game_width = 640;
-	game_height = 840;
+	game_height = 940;
 	
 }
 
@@ -203,6 +203,7 @@ void BreakoutGame::clickHandler(const ASGE::SharedEventData data)
 */
 void BreakoutGame::update(const ASGE::GameTime& us)
 {
+	
 	if (!in_menu)
 	{
 		
@@ -217,20 +218,20 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 		{
 			ball_direction.x_set(ball_direction.get_x() * -1);
 		}
-		
+
 		//Ceiling Collision
 		if (ball_sprite->yPos() < 0)
 		{
 			ball_direction.y_set(ball_direction.get_y() * -1);
 		}
 
-//Floor Reset
+		//Floor Reset
 		if (ball_sprite->yPos() > game_height + 50)
 		{
 			reset(x_pos, y_pos);
 			--player_life;
 		}
-		
+
 		//Paddle Collision
 		if (ball.spriteComponent()->getBoundingBox().isInside(
 			paddle.spriteComponent()->getBoundingBox()))
@@ -241,13 +242,16 @@ void BreakoutGame::update(const ASGE::GameTime& us)
 
 
 		BrickCollider();
-		
+		GemCollider();
+
 		PaddleMovement(paddle_pos, us);
-		
+
 		updateBall(x_pos, us, y_pos);
 
+		
+
 	}
-	}
+}
 
 void BreakoutGame::PaddleMovement(float &paddle_pos, const ASGE::GameTime & us)
 {
@@ -298,19 +302,11 @@ void BreakoutGame::BrickCollider()
 			ball_direction.normalise();
 			blocks[i].is_visible = false;
 			blocks_hit++;
+			score++;
 			break;
 		}
 		
 	}
-
-
-	/*for (int i = 0; i < max_gems; i++)
-		if (gems[i].spriteComponent()->getBoundingBox().isInside(
-			paddle.spriteComponent()->getBoundingBox()) == true
-			&& gems[i].is_visible == true)
-		{
-
-		}*/
 }
 
 void BreakoutGame::updateBall(float &x_pos, const ASGE::GameTime & us, float &y_pos)
@@ -323,13 +319,6 @@ void BreakoutGame::updateBall(float &x_pos, const ASGE::GameTime & us, float &y_
 	ball_sprite->yPos(y_pos);
 }
 
-	
-
-	//make sure you use delta time in any movement calculations!
-
-
-
-
 /**
 *   @brief   Renders the scene
 *   @details Renders all the game objects to the current frame.
@@ -339,7 +328,11 @@ void BreakoutGame::updateBall(float &x_pos, const ASGE::GameTime & us, float &y_
 */
 void BreakoutGame::render(const ASGE::GameTime & us)
 {
-	int elapsed_time = (us.game_time.count);
+	int rand_pos = (rand() % game_width);
+	int elapsed_time = (us.game_time.count() / 1000 );
+	int gem_drop1 = 10;
+	int gem_drop2 = 15;
+	int gem_drop3 = 20;
 
 	renderer->setFont(0);
 
@@ -351,30 +344,46 @@ void BreakoutGame::render(const ASGE::GameTime & us)
 	else if (player_life > 0 && blocks_hit != 50)
 	{
 		std::string life_str = "LIVES: " + std::to_string(player_life);
-		renderer->renderText(life_str, 450, 900, 1.0, ASGE::COLOURS::WHITE);
+		std::string score_str = "SCORE: " + std::to_string(score);
+		renderer->renderText(score_str, 500, 850, 1.0, ASGE::COLOURS::WHITE);
+		renderer->renderText(life_str, 500, 900, 1.0, ASGE::COLOURS::WHITE);
 		renderer->renderSprite(*paddle_sprite);
 		paddle_sprite->xPos(); //predefined in init
 		paddle_sprite->yPos(game_height - 100); //umnoving
 
 		renderer->renderSprite(*ball_sprite);
 
-	
+
 		BlockUpdate();
 
-		//if ()
-		//{
-			for (int i = 0; i < max_gems; i++)
+
+		for (int i = 0; i < max_gems; i++)
+		{
+			
+			if (elapsed_time >= gem_drop1)
 			{
-				gem_sprites[i]->xPos(game_width / 2);
-				gem_sprites[i]->yPos(game_height /2);
-
-
-				if (gems[i].is_visible == true)
-				{
-					renderer->renderSprite(*gem_sprites[i]);
-				}
+				auto gem_y_pos = gem_sprites[i]->yPos();
+				gem_sprites[i]->xPos(game_width / 3);
+				GemSpawn(gem_y_pos, us);
 			}
-		//}
+			if (elapsed_time >= gem_drop2)
+			{
+				auto gem_y_pos = gem_sprites[i]->yPos();
+				gem_sprites[i]->xPos(game_width / 1.5);
+				GemSpawn(gem_y_pos, us);
+			}
+			if (elapsed_time >= gem_drop3)
+			{
+				auto gem_y_pos = gem_sprites[i]->yPos();
+				gem_sprites[i]->xPos(game_width - 80);
+				GemSpawn(gem_y_pos, us);
+			}
+
+			
+		}
+	
+
+	
 	}
 
 	else if (player_life <= 0)
@@ -428,6 +437,41 @@ void BreakoutGame::BlockUpdate()
 	}
 }
 
+void BreakoutGame::GemCollider()
+{
+
+	for (int i = 0; i < 5; i++)
+	{
+		
+		if (gems[i].spriteComponent()->getBoundingBox().isInside(
+			paddle.spriteComponent()->getBoundingBox()) == true
+			&& gems[i].is_visible == true)
+		{
+			gems[i].is_visible = false;
+			score++;
+			break;
+		}
+	}
+}
+
+void BreakoutGame::GemSpawn(float& gem_y_pos, const ASGE::GameTime & us)
+{
+	
+
+	for (int i = 0; i < max_gems; i++)
+	{
+	//	gem_y_pos = 0;
+		gem_y_pos += 10 * (us.delta_time.count() / 1000.f);
+		
+		if (gems[i].is_visible == true)
+		{
+			renderer->renderSprite(*gem_sprites[i]);
+		}
+		gem_sprites[i]->yPos(gem_y_pos);
+	}
+
+	
+}
 
 void BreakoutGame::reset(float& x_pos, float& y_pos)
 {
